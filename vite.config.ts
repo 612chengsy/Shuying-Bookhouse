@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/Shuying-Bookhouse-V0.1.1/',
+    base: './',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
