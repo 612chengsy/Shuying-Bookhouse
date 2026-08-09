@@ -1,0 +1,6 @@
+{
+  "name": "疏影书屋",
+  "description": "舟渡星港的个人原创电子书屋与交流社区，包含小说、文学诗词在线阅读、导入与删除、点赞评论以及互动书评。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
