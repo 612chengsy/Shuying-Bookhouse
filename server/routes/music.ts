@@ -1,43 +1,56 @@
-import { Router } from 'express';
-import { getStore, updateStore } from '../db';
-import { MusicTrack } from '../../src/types';
+import { Hono } from 'hono';
+import { MusicTrack } from '../../src/types'; // 确保路径指向你的类型定义文件
+import { db } from '../db'; // 引入我们创建的内存数据库实例
 
-const router = Router();
+const app = new Hono();
 
-// GET all music tracks
-router.get('/', (req, res) => {
-  const store = getStore();
-  res.json(store.musicTracks);
+// 1. 获取所有音乐 (GET /api/music)
+app.get('/', (c) => {
+  // 直接从内存变量 db.musicTracks 中获取数据
+  return c.json(db.musicTracks);
 });
 
-// POST add music track
-router.post('/', (req, res) => {
-  const track: MusicTrack = req.body;
-  if (!track || !track.title) {
-    return res.status(400).json({ error: 'Track title is required' });
+// 2. 新增音乐 (POST /api/music)
+app.post('/', async (c) => {
+  try {
+    // 解析请求体中的 JSON 数据
+    const body = await c.req.json<MusicTrack>();
+
+    // 简单校验
+    if (!body || !body.title) {
+      return c.json({ error: 'Track title is required' }, 400);
+    }
+
+    // 创建新的音乐对象
+    const newTrack: MusicTrack = {
+      ...body,
+      id: body.id || 'track-' + Date.now()
+    };
+
+    // 将新音乐添加到内存数组的末尾
+    db.musicTracks.push(newTrack);
+
+    return c.json({
+      success: true,
+      track: newTrack
+    }, 201);
+
+  } catch (error) {
+    console.error('添加音乐失败:', error);
+    return c.json({ error: '服务器内部错误' }, 500);
   }
-
-  const newTrack: MusicTrack = {
-    ...track,
-    id: track.id || 'track-' + Date.now()
-  };
-
-  updateStore(store => ({
-    ...store,
-    musicTracks: [...store.musicTracks, newTrack]
-  }));
-
-  res.json({ success: true, track: newTrack });
 });
 
-// DELETE music track
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  updateStore(store => ({
-    ...store,
-    musicTracks: store.musicTracks.filter(t => t.id !== id)
-  }));
-  res.json({ success: true });
+// 3. 删除音乐 (DELETE /api/music/:id)
+app.delete('/:id', (c) => {
+  const id = c.req.param('id');
+  
+  // 在内存数组中过滤掉指定 ID 的音乐
+  db.musicTracks = db.musicTracks.filter(t => t.id !== id);
+
+  return c.json({
+    success: true
+  });
 });
 
-export default router;
+export default app;

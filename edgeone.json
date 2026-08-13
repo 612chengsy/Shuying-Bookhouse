@@ -1,3 +1,22 @@
 {
+  "name": "Shuying-Bookhouse",
+  "version": "1.0.0",
+  "routes": [
+    {
+      "path": "/api/*",
+      "function": "edge-functions/index.js"
+    }
+  ],
+  "static": {
+    "dir": "dist/public",
+    "fallback": "index.html"
+  }
+}
+{
   "version": 1, 
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "entry": "edge-functions/index.ts"
+  }
 }

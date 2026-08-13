@@ -90,3 +90,12 @@ export interface WritingStatusLog {
   date: string;
   content: string;
 }
+export interface UploadedFile {
+  id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  data: string; // Base64 data URL
+  uploadedAt: string;
+}
