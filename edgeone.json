@@ -8,7 +8,7 @@
     }
   ],
   "static": {
-    "dir": "public",
+    "dir": ".",
     "fallback": "index.html"
   },
   "buildCommand": "npm run build",
